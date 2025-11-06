@@ -5,6 +5,44 @@
  # This marco is only here to allow a quickstart with nice styles
  #}
 <style>
+#pcs-comment-fallback {
+	position: fixed;
+	right: 12px;
+	bottom: 12px;
+	max-width: 420px;
+	background: #fff;
+	border: 1px solid #ddd;
+	box-shadow: 0 2px 12px rgba(0,0,0,.15);
+	padding: 10px;
+	font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+	color: #222;
+	z-index: 9999;
+	display: none;
+}
+#pcs-comment-fallback strong {
+	display: block;
+	margin-bottom: 6px;
+}
+#pcs-comment-fallback small {
+	display: block;
+	margin: 4px 0 8px;
+	color: #555;
+}
+#pcs-comment-fallback a {
+	text-decoration: underline;
+}
+#pcs-comment-fallback textarea {
+	width: 100%;
+	min-height: 110px;
+	margin: 6px 0 8px;
+}
+#pcs-comment-fallback .pcs-row {
+	display: flex;
+	gap: 6px;
+}
+#pcs-comment-fallback button {
+	cursor: pointer;
+}
 #pcs-comment-form input,
 #pcs-comment-form textarea {
 	width: 100%;
@@ -121,6 +159,15 @@
 	{% endif %}
 	{{ comments_form() }}
 </section>
+<div id="pcs-comment-fallback" role="status" aria-live="polite">
+	<strong>Email didn’t open?</strong>
+	<small>Send to <a id="pcs-comment-fallback-address" href="#">address</a>, or copy your message below.</small>
+	<textarea id="pcs-comment-fallback-text" readonly></textarea>
+	<div class="pcs-row">
+		<button type="button" id="pcs-comment-fallback-copy">Copy message</button>
+		<button type="button" id="pcs-comment-fallback-close" aria-label="Close">Close</button>
+	</div>
+</div>
 {% endif %}
 {% endmacro %}
 

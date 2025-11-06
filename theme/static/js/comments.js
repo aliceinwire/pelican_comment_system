@@ -2,6 +2,7 @@
 var CommentSystem = {
 	email_user:   "not set",
 	email_domain: "not set",
+	max_mailto_length: 1800,
 	display_replyto_html: function(comment_content, article_slug, author) {return ''},
 
 	cancelReply: function() {
@@ -24,6 +25,25 @@ var CommentSystem = {
 		$('#pcs-comment-form-display-replyto').show();
 	},
 
+	showFallback: function(body, link) {
+		var $strip = $('#pcs-comment-fallback');
+		if ($strip.length == 0) { return; }
+		var address = this.email_user + '@' + this.email_domain;
+		$('#pcs-comment-fallback-address').attr('href', 'mailto:' + address).text(address);
+		$('#pcs-comment-fallback-text').val(body);
+		$('#pcs-comment-fallback-copy').off('click').on('click', function() {
+			try {
+				navigator.clipboard.writeText($('#pcs-comment-fallback-text').val());
+				var $btn = $('#pcs-comment-fallback-copy');
+				var old = $btn.text();
+				$btn.text('Copied');
+				setTimeout(function(){ $btn.text(old); }, 1500);
+			} catch(e) {}
+		});
+		$('#pcs-comment-fallback-close').off('click').on('click', function() { $strip.hide(); });
+		$strip.show();
+	},
+
 	getMailtoLink: function(slug) {
 		var subject = 'Comment for \'' + slug + '\'' ;
 
@@ -38,7 +58,7 @@ var CommentSystem = {
 			+ 'Hey,\nI posted a new comment on ' + document.URL + '\n\nGreetings ' + $("#pcs-comment-form-input-name").val() + '\n\n\n'
 			+ 'Raw comment data:\n'
 			+ '----------------------------------------\n'
-			+ 'email: \n' // just that I don't forget to write it down
+			+ 'email: ' + email + '\n' // just that I don't forget to write it down
 			+ 'date: ' + now.getFullYear()
 					+ '-' + pad(now.getMonth()+1)
 					+ '-' + pad(now.getDate())
@@ -71,6 +91,7 @@ var CommentSystem = {
 			+ "&body="
 			+ encodeURIComponent(body.replace(/\r?\n/g, "\r\n"));
 		console.log(link)
+		if (link.length > this.max_mailto_length) { this.showFallback(body, link); }
 		return link;
 	}
 }
